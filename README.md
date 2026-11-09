@@ -1,7 +1,7 @@
 # 🖨️ Résolution du conflit Ctrl+J - Scanner Intermec SG20T
 
-[![GitHub repo](https://img.shields.io/badge/GitHub-Septieme7/sg20t--config-181717?style=for-the-badge&logo=github)](https://github.com/Septieme7/sg20t-config)
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-En%20ligne-06b6d4?style=for-the-badge&logo=github)](https://septieme7.github.io/sg20t-config/)
+[![GitHub repo](https://img.shields.io/badge/GitHub-Intermec--SG20T--Guide-181717?style=flat&logo=github)](https://github.com/Septieme7/Intermec-SG20T-Guide.git)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-En%20ligne-06b6d4?style=flat&logo=github)](https://septieme7.github.io/Intermec-SG20T-Guide/)
 
 ## 🎯 Le Pourquoi de ce projet
 
@@ -22,6 +22,6 @@ Ce guide interactif a pour but d'aider les développeurs et intégrateurs qui fo
 
 ## 🚀 Utilisation
 
-Le tutoriel est directement consultable en ligne sur [GitHub Pages](https://septieme7.github.io/sg20t-config/). 
+Le tutoriel est directement consultable en ligne sur [GitHub Pages](https://septieme7.github.io/Intermec-SG20T-Guide/). 
 
 Si vous souhaitez le consulter ou l'héberger localement, clonez simplement ce dépôt et ouvrez le fichier `index.html` dans votre navigateur.
