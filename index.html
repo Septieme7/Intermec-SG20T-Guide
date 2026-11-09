@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration Intermec SG20T - Résolution du conflit Ctrl+J</title>
+    <meta name="description" content="Tutoriel technique pour configurer le scanner Intermec SG20T et empêcher l'ouverture intempestive de l'onglet des téléchargements sur les navigateurs Chromium.">
+    <meta name="theme-color" content="#09090b">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" href="icon/favicon-32x32.png" type="image/png">
+    <style>
+        :root {
+            --bg-color: #09090b;
+            --text-color: #f8fafc;
+            --card-bg: #18181b;
+            --primary: #06b6d4;
+            --secondary: #8b5cf6;
+            --border: #27272a;
+            --code-bg: #000000;
+            --code-text: #22c55e;
+            --alert-bg: rgba(6, 182, 212, 0.1);
+            --alert-border: #06b6d4;
+            --font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        body.light-mode {
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --code-bg: #1e293b;
+            --code-text: #4ade80;
+            --alert-bg: rgba(6, 182, 212, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-family);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-color);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .control-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-color);
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .control-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h2 svg {
+            color: var(--primary);
+            width: 24px;
+            height: 24px;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-color);
+            opacity: 0.9;
+        }
+
+        ul {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .prereq-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .step-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .step-number {
+            position: absolute;
+            top: -20px;
+            right: 10px;
+            font-size: 8rem;
+            font-weight: 900;
+            color: var(--primary);
+            opacity: 0.05;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .step-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .alert {
+            background-color: var(--alert-bg);
+            border-left: 4px solid var(--alert-border);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .alert svg {
+            flex-shrink: 0;
+            color: var(--alert-border);
+            width: 24px;
+            height: 24px;
+        }
+
+        .code-block {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            position: relative;
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--code-text);
+            overflow-x: auto;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text-color);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .copy-btn.copied {
+            background-color: #22c55e;
+            color: white;
+            border-color: #22c55e;
+        }
+
+        .image-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            cursor: zoom-in;
+            transition: transform 0.2s;
+        }
+
+        .image-container img:hover {
+            transform: scale(1.02);
+        }
+
+        .image-caption {
+            font-size: 0.875rem;
+            color: var(--text-color);
+            opacity: 0.6;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 10px;
+            transition: transform 0.2s;
+        }
+
+        .lightbox-close:hover {
+            transform: scale(1.1);
+        }
+
+        .lightbox-close svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        #back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 90;
+            box-shadow: 0 4px 10px rgba(6, 182, 212, 0.4);
+        }
+
+        #back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #back-to-top:hover {
+            transform: translateY(-3px);
+            background-color: var(--secondary);
+        }
+
+        #back-to-top svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .step-card { padding: 1.5rem; }
+            .step-number { font-size: 5rem; top: -10px; }
+            header { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title" data-i18n="header_title">Intermec SG20T</div>
+        <div class="controls">
+            <button class="control-btn" id="lang-toggle" aria-label="Changer de langue">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            </button>
+            <button class="control-btn" id="theme-toggle" aria-label="Changer de thème">
+                <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <h1 data-i18n="main_title">Résolution du conflit Ctrl+J avec le scanner SG20T</h1>
+
+        <div class="prereq-card">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <span data-i18n="prereq_title">Prérequis</span>
+            </h2>
+            <p data-i18n="prereq_desc">Pour reproduire ma méthode de résolution, vous aurez besoin des éléments suivants. J'ai utilisé l'outil officiel de Honeywell (qui a racheté Intermec) pour modifier les paramètres bas niveau du scanner.</p>
+            <ul>
+                <li data-i18n="prereq_item1">Un scanner Intermec SG20T connecté en USB.</li>
+                <li data-i18n="prereq_item2">Le logiciel <strong>EasySet</strong> d'Intermec. Je l'ai téléchargé depuis le <a href="https://hsmftp.honeywell.com" target="_blank" rel="noopener">portail de support technique Honeywell</a>. J'ai aussi utilisé <a href="https://sps-support.honeywell.com/s/article/What-is-EasySet-software-and-where-to-download-it-from?tabset-3dec3=2" target="_blank" rel="noopener">cet article d'assistance officiel</a>.</li>
+                <li data-i18n="prereq_item3">Un navigateur basé sur Chromium (Brave, Chrome) pour constater le problème initial.</li>
+            </ul>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    <span data-i18n="step1_title">Comprendre la cause racine (HID et CR+LF)</span>
+                </h2>
+                <p data-i18n="step1_desc">J'ai identifié que le problème ne venait ni de mon application React, ni du navigateur, mais de la configuration d'usine du scanner. Le SG20T émule un clavier (HID) et envoie par défaut un suffixe <strong>Carriage Return + Line Feed (CR+LF)</strong> après chaque scan.</p>
+                <p data-i18n="step1_desc2">Dans un environnement de bureau, cela valide la saisie. Mais dans un navigateur Chromium, le caractère <strong>LF (Line Feed)</strong> est interprété comme le raccourci clavier <code>Ctrl+J</code>, ce qui a pour effet d'ouvrir l'onglet des téléchargements à chaque scan.</p>
+                <div class="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    <div>
+                        <strong data-i18n="step1_alert_title">Analyse technique :</strong>
+                        <span data-i18n="step1_alert_desc">La solution la plus robuste consiste à reconfigurer le suffixe (Postamble) du scanner pour qu'il n'envoie plus que <code>CR</code>. J'ai écarté l'option <code>None</code> car elle nécessitait une validation manuelle, et j'ai retiré le <code>LF</code> qui déclenchait le raccourci.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span data-i18n="step2_title">Création d'un postamble personnalisé</span>
+                </h2>
+                <p data-i18n="step2_desc">Après avoir installé et lancé EasySet, j'ai connecté le scanner et sélectionné le modèle <strong>SG20T</strong>. J'ai ensuite navigué dans l'arborescence jusqu'à <code>4. Data transmission settings</code> puis cliqué sur <code>Postamble</code>.</p>
+                <p data-i18n="step2_desc2">C'est ici qu'il y a un piège classique : les préréglages standards sont verrouillés. Sélectionner <code>None</code> supprime toute validation (obligeant à appuyer sur Entrée), et <code>Carriage Return + Line Feed</code> provoque le bug. J'ai donc dû créer un suffixe sur mesure :</p>
+                <ul>
+                    <li data-i18n="step2_item1">Au lieu de choisir un préréglage, j'ai cliqué sur le bouton <strong>Compose</strong> (ou <em>Compose Postamble</em>).</li>
+                    <li data-i18n="step2_item2">Dans la fenêtre d'édition, j'ai ajouté <strong>uniquement CR (Carriage Return)</strong>.</li>
+                    <li data-i18n="step2_item3">J'ai validé la composition en cliquant sur <strong>OK</strong>.</li>
+                </ul>
+                <div class="image-container">
+                    <img src="img/step2.webp" alt="Interface EasySet avec Postamble None" data-i18n-alt="step2_img_alt">
+                    <div class="image-caption" data-i18n="step2_img_caption">Capture d'écran de mon paramétrage dans EasySet.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span data-i18n="step3_title">Génération et envoi au matériel</span>
+                </h2>
+                <p data-i18n="step3_desc">Une fois la commande personnalisée composée, j'ai généré le code-barres de configuration via le bouton <strong>Generate Barcode</strong> (ou l'icône dédiée dans la barre d'outils).</p>
+                <p data-i18n="step3_desc2">J'ai ensuite scanné ce code-barres avec le SG20T pour enregistrer la nouvelle configuration dans sa mémoire. Le scanner a émis un bip de confirmation, validant la prise en compte du suffixe <code>CR</code> seul.</p>
+                <div class="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    <div>
+                        <strong data-i18n="step3_alert_title">Note sur l'envoi :</strong>
+                        <span data-i18n="step3_alert_desc">Si votre scanner est connecté en USB, vous pouvez aussi utiliser l'option "Send to product" (la flèche verte dans la barre d'outils d'EasySet) pour envoyer la commande directement, sans passer par le scan du code-barres.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <h2>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <span data-i18n="step4_title">Sécurisation logicielle (Optionnelle)</span>
+                </h2>
+                <p data-i18n="step4_desc">Bien que la reconfiguration matérielle ait résolu mon problème, j'ai ajouté une sécurité dans mon application React. Cela permet d'intercepter les événements si un autre scanner (ou un utilisateur) envoie un caractère de fin non désiré.</p>
+                <div class="code-block">
+                    <button class="copy-btn" data-i18n="copy_btn">Copier</button>
+<pre><code>const handleKeyDown = (event) => {
+  // Interception de la touche Entrée (13) ou Line Feed (10)
+  if (event.key === 'Enter' || event.keyCode === 13 || event.keyCode === 10) {
+    event.preventDefault(); // Bloque le comportement par défaut (ex: Ctrl+J)
+    
+    // Logique de validation du scan
+    console.log('Scan validé:', inputElement.value);
+  }
+};</code></pre>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>By <a href="https://github.com/Septieme7" target="_blank" rel="noopener">Septieme7</a></p>
+    </footer>
+
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightbox-close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <img id="lightbox-img" src="" alt="Zoom">
+    </div>
+
+    <button id="back-to-top" aria-label="Retour en haut">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+    </button>
+
+    <script>
+        const translations = {
+            fr: {
+                header_title: "Intermec SG20T",
+                main_title: "Résolution du conflit Ctrl+J avec le scanner SG20T",
+                prereq_title: "Prérequis",
+                prereq_desc: "Pour reproduire ma méthode de résolution, vous aurez besoin des éléments suivants. J'ai utilisé l'outil officiel de Honeywell (qui a racheté Intermec) pour modifier les paramètres bas niveau du scanner.",
+                prereq_item1: "Un scanner Intermec SG20T connecté en USB.",
+                prereq_item2: "Le logiciel <strong>EasySet</strong> d'Intermec. Je l'ai téléchargé depuis le <a href='https://hsmftp.honeywell.com' target='_blank' rel='noopener'>portail de support technique Honeywell</a>. J'ai aussi utilisé <a href='https://sps-support.honeywell.com/s/article/What-is-EasySet-software-and-where-to-download-it-from?tabset-3dec3=2' target='_blank' rel='noopener'>cet article d'assistance officiel</a>.",
+                prereq_item3: "Un navigateur basé sur Chromium (Brave, Chrome) pour constater le problème initial.",
+                step1_title: "Comprendre la cause racine (HID et CR+LF)",
+                step1_desc: "J'ai identifié que le problème ne venait ni de mon application React, ni du navigateur, mais de la configuration d'usine du scanner. Le SG20T émule un clavier (HID) et envoie par défaut un suffixe <strong>Carriage Return + Line Feed (CR+LF)</strong> après chaque scan.",
+                step1_desc2: "Dans un environnement de bureau, cela valide la saisie. Mais dans un navigateur Chromium, le caractère <strong>LF (Line Feed)</strong> est interprété comme le raccourci clavier <code>Ctrl+J</code>, ce qui a pour effet d'ouvrir l'onglet des téléchargements à chaque scan.",
+                step1_alert_title: "Analyse technique :",
+                step1_alert_desc: "La solution la plus robuste consiste à reconfigurer le suffixe (Postamble) du scanner pour qu'il n'envoie plus que <code>CR</code>. J'ai écarté l'option <code>None</code> car elle nécessitait une validation manuelle, et j'ai retiré le <code>LF</code> qui déclenchait le raccourci.",
+                step2_title: "Création d'un postamble personnalisé",
+                step2_desc: "Après avoir installé et lancé EasySet, j'ai connecté le scanner et sélectionné le modèle <strong>SG20T</strong>. J'ai ensuite navigué dans l'arborescence jusqu'à <code>4. Data transmission settings</code> puis cliqué sur <code>Postamble</code>.",
+                step2_desc2: "C'est ici qu'il y a un piège classique : les préréglages standards sont verrouillés. Sélectionner <code>None</code> supprime toute validation (obligeant à appuyer sur Entrée), et <code>Carriage Return + Line Feed</code> provoque le bug. J'ai donc dû créer un suffixe sur mesure :",
+                step2_item1: "Au lieu de choisir un préréglage, j'ai cliqué sur le bouton <strong>Compose</strong> (ou <em>Compose Postamble</em>).",
+                step2_item2: "Dans la fenêtre d'édition, j'ai ajouté <strong>uniquement CR (Carriage Return)</strong>.",
+                step2_item3: "J'ai validé la composition en cliquant sur <strong>OK</strong>.",
+                step2_img_alt: "Interface EasySet avec Postamble None",
+                step2_img_caption: "Capture d'écran de mon paramétrage dans EasySet.",
+                step3_title: "Génération et envoi au matériel",
+                step3_desc: "Une fois la commande personnalisée composée, j'ai généré le code-barres de configuration via le bouton <strong>Generate Barcode</strong> (ou l'icône dédiée dans la barre d'outils).",
+                step3_desc2: "J'ai ensuite scanné ce code-barres avec le SG20T pour enregistrer la nouvelle configuration dans sa mémoire. Le scanner a émis un bip de confirmation, validant la prise en compte du suffixe <code>CR</code> seul.",
+                step3_alert_title: "Note sur l'envoi :",
+                step3_alert_desc: "Si votre scanner est connecté en USB, vous pouvez aussi utiliser l'option 'Send to product' (la flèche verte dans la barre d'outils d'EasySet) pour envoyer la commande directement, sans passer par le scan du code-barres.",
+                step4_title: "Sécurisation logicielle (Optionnelle)",
+                step4_desc: "Bien que la reconfiguration matérielle ait résolu mon problème, j'ai ajouté une sécurité dans mon application React. Cela permet d'intercepter les événements si un autre scanner (ou un utilisateur) envoie un caractère de fin non désiré.",
+                copy_btn: "Copier",
+                copied_btn: "Copié !"
+            },
+            en: {
+                header_title: "Intermec SG20T",
+                main_title: "Resolving the Ctrl+J conflict with the SG20T scanner",
+                prereq_title: "Prerequisites",
+                prereq_desc: "To replicate my troubleshooting method, you will need the following. I used the official Honeywell tool (which acquired Intermec) to modify the scanner's low-level settings.",
+                prereq_item1: "An Intermec SG20T scanner connected via USB.",
+                prereq_item2: "The <strong>EasySet</strong> software from Intermec. I downloaded it from the <a href='https://hsmftp.honeywell.com' target='_blank' rel='noopener'>Honeywell Technical Support portal</a>. I also used <a href='https://sps-support.honeywell.com/s/article/What-is-EasySet-software-and-where-to-download-it-from?tabset-3dec3=2' target='_blank' rel='noopener'>this official support article</a>.",
+                prereq_item3: "A Chromium-based browser (Brave, Chrome) to observe the initial issue.",
+                step1_title: "Understanding the root cause (HID and CR+LF)",
+                step1_desc: "I identified that the issue was neither from my React application nor the browser, but from the scanner's factory configuration. The SG20T emulates a keyboard (HID) and by default sends a <strong>Carriage Return + Line Feed (CR+LF)</strong> suffix after each scan.",
+                step1_desc2: "In a desktop environment, this validates the input. However, in a Chromium browser, the <strong>LF (Line Feed)</strong> character is interpreted as the <code>Ctrl+J</code> keyboard shortcut, which opens the downloads tab on every scan.",
+                step1_alert_title: "Technical analysis:",
+                step1_alert_desc: "The most robust solution is to reconfigure the scanner's Postamble so it only sends <code>CR</code>. I ruled out the <code>None</code> option because it required manual validation, and I removed the <code>LF</code> that triggered the shortcut.",
+                step2_title: "Creating a custom postamble",
+                step2_desc: "After installing and launching EasySet, I connected the scanner and selected the <strong>SG20T</strong> model. I then navigated the tree view to <code>4. Data transmission settings</code> and clicked on <code>Postamble</code>.",
+                step2_desc2: "This is where a classic trap lies: standard presets are locked. Selecting <code>None</code> removes all validation (forcing you to press Enter), and <code>Carriage Return + Line Feed</code> causes the bug. So I had to create a custom suffix:",
+                step2_item1: "Instead of choosing a preset, I clicked the <strong>Compose</strong> button (or <em>Compose Postamble</em>).",
+                step2_item2: "In the editor window, I added <strong>only CR (Carriage Return)</strong>.",
+                step2_item3: "I validated the composition by clicking <strong>OK</strong>.",
+                step2_img_alt: "EasySet interface with Postamble None",
+                step2_img_caption: "Screenshot of my EasySet configuration.",
+                step3_title: "Generation and sending to hardware",
+                step3_desc: "Once the custom command was composed, I generated the configuration barcode using the <strong>Generate Barcode</strong> button (or the dedicated icon in the toolbar).",
+                step3_desc2: "I then scanned this barcode with the SG20T to save the new configuration into its memory. The scanner beeped to confirm, validating the single <code>CR</code> suffix.",
+                step3_alert_title: "Note on sending:",
+                step3_alert_desc: "If your scanner is connected via USB, you can also use the 'Send to product' option (the green arrow in the EasySet toolbar) to send the command directly, without scanning the barcode.",
+                step4_title: "Software hardening (Optional)",
+                step4_desc: "Although the hardware reconfiguration solved my issue, I added a safeguard in my React application. This intercepts events if another scanner (or user) sends an undesired terminator character.",
+                copy_btn: "Copy",
+                copied_btn: "Copied!"
+            }
+        };
+
+        let currentLang = 'fr';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    el.innerHTML = translations[lang][key];
+                }
+            });
+            document.querySelectorAll('[data-i18n-alt]').forEach(el => {
+                const key = el.getAttribute('data-i18n-alt');
+                if (translations[lang][key]) {
+                    el.alt = translations[lang][key];
+                }
+            });
+            // Update copy buttons text if not copied
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                if(!btn.classList.contains('copied')) {
+                    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> ${translations[lang].copy_btn}`;
+                }
+            });
+        }
+
+        document.getElementById('lang-toggle').addEventListener('click', () => {
+            setLanguage(currentLang === 'fr' ? 'en' : 'fr');
+        });
+
+        // Theme toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const body = document.body;
+
+        const sunIcon = `<path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"></path>`;
+        const moonIcon = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+
+        function setTheme(isLight) {
+            if (isLight) {
+                body.classList.add('light-mode');
+                themeIcon.innerHTML = sunIcon;
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.remove('light-mode');
+                themeIcon.innerHTML = moonIcon;
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') setTheme(true);
+
+        themeToggle.addEventListener('click', () => {
+            setTheme(!body.classList.contains('light-mode'));
+        });
+
+        // Back to top
+        const backToTop = document.getElementById('back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Lightbox
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxClose = document.getElementById('lightbox-close');
+        const images = document.querySelectorAll('.image-container img');
+
+        images.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        lightboxClose.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox();
+        });
+
+        // Copy button
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const codeBlock = btn.nextElementSibling;
+                const textToCopy = codeBlock.textContent;
+                try {
+                    await navigator.clipboard.writeText(textToCopy);
+                    btn.classList.add('copied');
+                    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> ${translations[currentLang].copied_btn}`;
+                    setTimeout(() => {
+                        btn.classList.remove('copied');
+                        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> ${translations[currentLang].copy_btn}`;
+                    }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy', err);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
