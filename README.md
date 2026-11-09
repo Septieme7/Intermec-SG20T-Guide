@@ -1,9 +1,9 @@
-# 🖨️ Résolution du conflit Ctrl+J - Scanner Intermec SG20T
+# Résolution du conflit Ctrl+J - Scanner Intermec SG20T
 
 [![GitHub repo](https://img.shields.io/badge/GitHub-Intermec--SG20T--Guide-181717?style=flat&logo=github)](https://github.com/Septieme7/Intermec-SG20T-Guide.git)
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-En%20ligne-06b6d4?style=flat&logo=github)](https://septieme7.github.io/Intermec-SG20T-Guide/)
 
-## 🎯 Le Pourquoi de ce projet
+## Le Pourquoi de ce projet
 
 J'ai créé ce tutoriel pour documenter et partager la solution à un problème particulièrement frustrant que j'ai rencontré lors de l'intégration d'un scanner de codes-barres Intermec SG20T dans une application web.
 
@@ -11,7 +11,7 @@ Lorsqu'on utilise ce type de matériel (qui émule un clavier USB classique, ou 
 
 En analysant la chaîne de communication, j'ai compris que le scanner envoyait par défaut un suffixe `Carriage Return + Line Feed` (CR+LF). Le caractère `LF` (Line Feed) est interprété par le navigateur comme le raccourci clavier `Ctrl+J`, d'où l'ouverture de la page de téléchargements.
 
-## 🛠️ Les aides apportées
+##️ Les aides apportées
 
 Ce guide interactif a pour but d'aider les développeurs et intégrateurs qui font face au même blocage :
 
@@ -20,7 +20,7 @@ Ce guide interactif a pour but d'aider les développeurs et intégrateurs qui fo
 - **Sécurité applicative (React)** : J'ai également inclus un extrait de code pour les développeurs souhaitant ajouter une sécurité logicielle (interception de l'événement `keydown`) afin de rendre l'application autonome, quel que soit le matériel utilisé.
 - **Accessibilité** : Le tutoriel est disponible en version bilingue (Français/Anglais) et propose un confort de lecture optimal grâce à un thème sombre et un thème clair.
 
-## 🚀 Utilisation
+## Utilisation
 
 Le tutoriel est directement consultable en ligne sur [GitHub Pages](https://septieme7.github.io/Intermec-SG20T-Guide/). 
 
