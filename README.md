@@ -1,7 +1,7 @@
 # Résolution du conflit Ctrl+J - Scanner Intermec SG20T
 
-[![GitHub repo](https://img.shields.io/badge/GitHub-Intermec--SG20T--Guide-181717?style=flat&logo=github)](https://github.com/Septieme7/Intermec-SG20T-Guide.git)
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-En%20ligne-06b6d4?style=flat&logo=github)](https://septieme7.github.io/Intermec-SG20T-Guide/)
+[![GitHub repo](https://img.shields.io/badge/GitHub-Intermec--SG20T--Guide-181717?style=plastic&logo=github)](https://github.com/Septieme7/Intermec-SG20T-Guide.git)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-En%20ligne-06b6d4?style=plastic&logo=github)](https://septieme7.github.io/Intermec-SG20T-Guide/)
 
 ## Le Pourquoi de ce projet
 
