@@ -11,7 +11,7 @@ Lorsqu'on utilise ce type de matériel (qui émule un clavier USB classique, ou 
 
 En analysant la chaîne de communication, j'ai compris que le scanner envoyait par défaut un suffixe `Carriage Return + Line Feed` (CR+LF). Le caractère `LF` (Line Feed) est interprété par le navigateur comme le raccourci clavier `Ctrl+J`, d'où l'ouverture de la page de téléchargements.
 
-##️ Les aides apportées
+## Les aides apportées
 
 Ce guide interactif a pour but d'aider les développeurs et intégrateurs qui font face au même blocage :
 
