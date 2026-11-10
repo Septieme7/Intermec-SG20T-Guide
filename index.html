@@ -1,398 +1,652 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configuration Intermec SG20T - Résolution du conflit Ctrl+J</title>
     <meta name="description" content="Tutoriel technique pour configurer le scanner Intermec SG20T et empêcher l'ouverture intempestive de l'onglet des téléchargements sur les navigateurs Chromium.">
-    <meta name="theme-color" content="#09090b">
+    <meta name="theme-color" content="#070b14">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" href="icon/favicon-32x32.png" type="image/png">
     <style>
         :root {
-            --bg-color: #09090b;
-            --text-color: #f8fafc;
-            --card-bg: #18181b;
-            --primary: #06b6d4;
-            --secondary: #8b5cf6;
-            --border: #27272a;
-            --code-bg: #000000;
-            --code-text: #22c55e;
-            --alert-bg: rgba(6, 182, 212, 0.1);
-            --alert-border: #06b6d4;
-            --font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+            --header-h: 68px;
+            --radius-lg: 18px;
+            --radius: 14px;
+            --radius-sm: 9px;
+            --radius-pill: 999px;
+
+            --accent-1: #0070d1;
+            --accent-2: #00d4ff;
+            --accent-3: #6a5cff;
+            --accent-grad: linear-gradient(135deg, var(--accent-1) 0%, var(--accent-2) 60%, var(--accent-3) 100%);
+
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        body.light-mode {
-            --bg-color: #f8fafc;
-            --text-color: #0f172a;
-            --card-bg: #ffffff;
-            --border: #e2e8f0;
-            --code-bg: #1e293b;
-            --code-text: #4ade80;
-            --alert-bg: rgba(6, 182, 212, 0.05);
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        [data-theme="dark"] {
+            color-scheme: dark;
+            --bg: #070b14;
+            --bg-2: #0b1120;
+            --surface: rgba(18, 26, 45, 0.72);
+            --surface-solid: #101728;
+            --surface-2: rgba(28, 38, 60, 0.6);
+            --border: rgba(120, 150, 220, 0.14);
+            --border-strong: rgba(120, 150, 220, 0.28);
+            --text: #e6ecf5;
+            --text-muted: #93a3c4;
+            --text-dim: #5c6a8a;
+            --code-bg: rgba(0, 112, 209, 0.14);
+            --code-border: rgba(0, 190, 255, 0.25);
+            --code-text: #7fd6ff;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+            --shadow-soft: 0 4px 18px rgba(0, 0, 0, 0.35);
+            --glow: 0 0 24px rgba(0, 212, 255, 0.28);
+            --callout-info-bg: rgba(0, 112, 209, 0.10);
+            --callout-info-bd: rgba(0, 190, 255, 0.42);
+            --callout-tip-bg: rgba(0, 220, 140, 0.08);
+            --callout-tip-bd: rgba(0, 220, 140, 0.42);
+            --callout-warn-bg: rgba(255, 176, 32, 0.08);
+            --callout-warn-bd: rgba(255, 176, 32, 0.45);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        [data-theme="light"] {
+            color-scheme: light;
+            --bg: #f3f6fc;
+            --bg-2: #e8eef9;
+            --surface: rgba(255, 255, 255, 0.92);
+            --surface-solid: #ffffff;
+            --surface-2: rgba(240, 245, 253, 0.9);
+            --border: rgba(10, 60, 130, 0.14);
+            --border-strong: rgba(10, 60, 130, 0.28);
+            --text: #16202f;
+            --text-muted: #4c5f7d;
+            --text-dim: #8093b0;
+            --code-bg: rgba(0, 112, 209, 0.09);
+            --code-border: rgba(0, 112, 209, 0.28);
+            --code-text: #0055a5;
+            --shadow: 0 10px 40px rgba(30, 70, 130, 0.10);
+            --shadow-soft: 0 4px 18px rgba(30, 70, 130, 0.08);
+            --glow: 0 0 24px rgba(0, 112, 209, 0.16);
+            --callout-info-bg: rgba(0, 112, 209, 0.06);
+            --callout-info-bd: rgba(0, 112, 209, 0.35);
+            --callout-tip-bg: rgba(0, 200, 130, 0.08);
+            --callout-tip-bd: rgba(0, 190, 130, 0.4);
+            --callout-warn-bg: rgba(255, 176, 32, 0.10);
+            --callout-warn-bd: rgba(255, 160, 20, 0.5);
         }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+        html, body { margin: 0; padding: 0; }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: var(--font-family);
-            line-height: 1.6;
-            transition: background-color 0.3s, color 0.3s;
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            transition: background-color var(--transition), color var(--transition);
+            overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        header {
-            position: sticky;
-            top: 0;
-            background-color: var(--bg-color);
+        a { color: var(--accent-2); text-decoration: none; transition: color var(--transition); word-break: break-word; }
+        [data-theme="light"] a { color: var(--accent-1); }
+        a:hover { color: var(--accent-3); text-decoration: underline; text-underline-offset: 3px; }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.88em;
+            background: var(--code-bg);
+            border: 1px solid var(--code-border);
+            color: var(--code-text);
+            padding: 0.12em 0.45em;
+            border-radius: var(--radius-sm);
+            white-space: nowrap;
+        }
+
+        img { max-width: 100%; height: auto; display: block; }
+
+        /* ---------- Background décoratif (grille + orbes) ---------- */
+        .bg-layer {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(to right, var(--border) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+            background-size: 44px 44px;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 85%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 85%);
+            opacity: 0.55;
+        }
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.32;
+            animation: float 22s ease-in-out infinite;
+        }
+        .bg-orb--1 { width: 480px; height: 480px; background: var(--accent-1); top: -160px; left: -120px; animation-delay: 0s; }
+        .bg-orb--2 { width: 420px; height: 420px; background: var(--accent-2); top: 40%; right: -140px; animation-delay: -8s; opacity: 0.22; }
+        .bg-orb--3 { width: 380px; height: 380px; background: var(--accent-3); bottom: -120px; left: 30%; animation-delay: -16s; opacity: 0.2; }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33%      { transform: translate(40px, -30px) scale(1.06); }
+            66%      { transform: translate(-30px, 30px) scale(0.96); }
+        }
+
+        /* ---------- Header ---------- */
+        .site-header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--header-h);
+            z-index: 90;
+            background: var(--surface);
+            backdrop-filter: saturate(180%) blur(16px);
+            -webkit-backdrop-filter: saturate(180%) blur(16px);
             border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem;
+            transition: box-shadow var(--transition);
+        }
+        .site-header.scrolled { box-shadow: var(--shadow-soft); }
+
+        .header-inner {
+            height: 100%;
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 0 20px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            z-index: 100;
-            backdrop-filter: blur(10px);
+            gap: 16px;
         }
 
-        .header-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--primary);
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: 0.2px;
         }
+        .brand:hover { text-decoration: none; color: var(--text); }
+        .brand-badge {
+            display: inline-grid;
+            place-items: center;
+            padding: 4px 9px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            color: #fff;
+            background: var(--accent-grad);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--glow);
+        }
+        .brand-text { font-size: 15.5px; }
 
-        .controls {
+        .header-actions {
+            margin-left: auto;
             display: flex;
-            gap: 1rem;
+            align-items: center;
+            gap: 12px;
         }
 
-        .control-btn {
-            background: none;
-            border: 1px solid var(--border);
-            color: var(--text-color);
-            padding: 0.5rem;
-            border-radius: 8px;
+        /* ---------- Toggle thème (pilule glissante) ---------- */
+        .theme-toggle {
+            background: transparent;
+            border: 0;
+            padding: 0;
             cursor: pointer;
-            display: flex;
+            border-radius: var(--radius-pill);
+            outline-offset: 3px;
+        }
+        .theme-toggle__track {
+            position: relative;
+            display: inline-block;
+            width: 56px; height: 30px;
+            border-radius: var(--radius-pill);
+            background: var(--surface-2);
+            border: 1px solid var(--border-strong);
+            transition: background var(--transition), border-color var(--transition);
+        }
+        .theme-toggle__thumb {
+            position: absolute;
+            top: 50%;
+            left: 3px;
+            transform: translateY(-50%);
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            background: var(--accent-grad);
+            box-shadow: var(--glow);
+            display: grid;
+            place-items: center;
+            color: #fff;
+            transition: left var(--transition-slow);
+        }
+        [data-theme="light"] .theme-toggle__thumb { left: calc(100% - 27px); }
+        .theme-toggle svg {
+            position: absolute;
+            width: 14px; height: 14px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: opacity var(--transition), transform var(--transition);
+        }
+        .theme-toggle .ico-sun  { opacity: 0; transform: rotate(60deg); }
+        .theme-toggle .ico-moon { opacity: 1; transform: rotate(0); }
+        [data-theme="light"] .theme-toggle .ico-sun  { opacity: 1; transform: rotate(0); }
+        [data-theme="light"] .theme-toggle .ico-moon { opacity: 0; transform: rotate(-60deg); }
+
+        /* ---------- Switch langue FR / EN (pilule) ---------- */
+        .lang-switch {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px;
+            gap: 2px;
+            background: var(--surface-2);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-pill);
+        }
+        .lang-btn {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            min-width: 34px;
+            padding: 5px 10px;
+            border: 0;
+            border-radius: var(--radius-pill);
+            font-family: var(--font-body);
+            font-size: 11.5px;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            background: transparent;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+            user-select: none;
         }
-
-        .control-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary);
+        .lang-btn:hover { color: var(--text); background: var(--surface); }
+        .lang-btn.is-active {
+            background: var(--accent-grad);
+            color: #fff;
+            box-shadow: var(--glow);
+            cursor: default;
+            pointer-events: none;
         }
+        .lang-btn:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
 
-        .control-btn svg {
-            width: 20px;
-            height: 20px;
-        }
-
+        /* ---------- Main ---------- */
         main {
             max-width: 900px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: calc(var(--header-h) + 40px) 20px 60px;
         }
 
         h1 {
-            font-size: 2.5rem;
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            font-weight: 800;
             text-align: center;
-            margin-bottom: 2rem;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
+            margin-bottom: 2.5rem;
+            background: var(--accent-grad);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
+            color: transparent;
+            letter-spacing: -0.02em;
         }
 
         h2 {
-            font-size: 1.5rem;
+            font-size: 1.35rem;
+            font-weight: 700;
             margin-bottom: 1rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
 
-        h2 svg {
-            color: var(--primary);
-            width: 24px;
-            height: 24px;
+        .h2-icon {
+            display: inline-grid;
+            place-items: center;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: var(--accent-grad);
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: var(--glow);
         }
+        .h2-icon svg { width: 20px; height: 20px; }
 
-        p {
-            margin-bottom: 1rem;
-            color: var(--text-color);
-            opacity: 0.9;
-        }
+        p { margin-bottom: 1rem; }
+        ul { margin-bottom: 1rem; padding-left: 1.5rem; }
+        li { margin-bottom: 0.5rem; }
 
-        ul {
-            margin-bottom: 1rem;
-            padding-left: 1.5rem;
-        }
-
-        li {
-            margin-bottom: 0.5rem;
-        }
-
-        a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        .prereq-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow);
-        }
-
+        /* ---------- Cartes (prereq + step) ---------- */
+        .prereq-card,
         .step-card {
-            background-color: var(--card-bg);
+            background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             padding: 2rem;
             margin-bottom: 2rem;
             position: relative;
             overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: var(--shadow-soft);
+            transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+            backdrop-filter: saturate(140%) blur(8px);
+            -webkit-backdrop-filter: saturate(140%) blur(8px);
         }
-
+        .prereq-card { border-left: 3px solid var(--accent-2); }
         .step-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+            border-color: var(--border-strong);
         }
 
         .step-number {
             position: absolute;
             top: -20px;
-            right: 10px;
-            font-size: 8rem;
+            right: 14px;
+            font-size: 7.5rem;
             font-weight: 900;
-            color: var(--primary);
-            opacity: 0.05;
+            color: var(--accent-2);
+            opacity: 0.07;
             z-index: 0;
             pointer-events: none;
+            user-select: none;
+            line-height: 1;
+            letter-spacing: -0.04em;
         }
 
-        .step-content {
-            position: relative;
-            z-index: 1;
-        }
+        .step-content,
+        .prereq-card > * { position: relative; z-index: 1; }
 
+        /* ---------- Callouts / Alertes ---------- */
         .alert {
-            background-color: var(--alert-bg);
-            border-left: 4px solid var(--alert-border);
-            padding: 1rem;
+            background: var(--callout-info-bg);
+            border: 1px solid var(--callout-info-bd);
+            border-left: 4px solid var(--callout-info-bd);
+            padding: 1rem 1.25rem;
             margin: 1rem 0;
-            border-radius: 0 8px 8px 0;
+            border-radius: var(--radius);
             display: flex;
             gap: 1rem;
+            align-items: flex-start;
         }
-
         .alert svg {
             flex-shrink: 0;
-            color: var(--alert-border);
-            width: 24px;
-            height: 24px;
+            color: var(--accent-2);
+            width: 22px;
+            height: 22px;
+            margin-top: 2px;
         }
+        .alert strong { color: var(--text); }
+        .alert--info { background: var(--callout-info-bg); border-color: var(--callout-info-bd); }
+        .alert--info svg { color: var(--accent-2); }
+        .alert--tip  { background: var(--callout-tip-bg);  border-color: var(--callout-tip-bd); }
+        .alert--tip svg { color: #00d48a; }
+        .alert--warn { background: var(--callout-warn-bg); border-color: var(--callout-warn-bd); }
+        .alert--warn svg { color: #ffb020; }
 
+        /* ---------- Bloc de code ---------- */
         .code-block {
-            background-color: var(--code-bg);
+            background: var(--surface-solid);
             border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
+            border-radius: var(--radius);
+            padding: 2.75rem 1.25rem 1.25rem;
             margin: 1rem 0;
             position: relative;
-            font-family: 'Courier New', Courier, monospace;
-            color: var(--code-text);
-            overflow-x: auto;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
         }
-
+        .code-block pre {
+            margin: 0;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.88rem;
+            line-height: 1.6;
+            color: var(--code-text);
+        }
+        .code-block code {
+            background: none;
+            border: 0;
+            padding: 0;
+            color: inherit;
+            font-size: inherit;
+            white-space: pre;
+        }
         .copy-btn {
             position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background: var(--card-bg);
+            top: 0.7rem;
+            right: 0.7rem;
+            background: var(--surface-2);
             border: 1px solid var(--border);
-            color: var(--text-color);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
+            color: var(--text-muted);
+            padding: 0.35rem 0.7rem;
+            border-radius: var(--radius-sm);
             cursor: pointer;
+            font-family: var(--font-body);
             font-size: 0.75rem;
-            display: flex;
+            font-weight: 700;
+            display: inline-flex;
             align-items: center;
-            gap: 0.25rem;
-            transition: all 0.2s;
+            gap: 0.35rem;
+            transition: all var(--transition);
+            z-index: 2;
         }
-
-        .copy-btn:hover {
-            color: var(--primary);
-            border-color: var(--primary);
-        }
-
+        .copy-btn:hover { color: var(--accent-2); border-color: var(--accent-2); }
+        .copy-btn svg { width: 14px; height: 14px; }
         .copy-btn.copied {
-            background-color: #22c55e;
-            color: white;
-            border-color: #22c55e;
+            background: #00c07a;
+            color: #fff;
+            border-color: #00c07a;
         }
 
+        /* ---------- Images ---------- */
         .image-container {
             margin: 1.5rem 0;
             text-align: center;
         }
-
         .image-container img {
             max-width: 100%;
-            border-radius: 8px;
+            border-radius: var(--radius);
             border: 1px solid var(--border);
             cursor: zoom-in;
-            transition: transform 0.2s;
+            transition: transform var(--transition), box-shadow var(--transition);
+            box-shadow: var(--shadow-soft);
         }
-
         .image-container img:hover {
             transform: scale(1.02);
+            box-shadow: var(--shadow);
         }
-
         .image-caption {
-            font-size: 0.875rem;
-            color: var(--text-color);
-            opacity: 0.6;
-            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-top: 0.6rem;
             font-style: italic;
         }
 
+        /* ---------- Lightbox ---------- */
         .lightbox {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.92);
             z-index: 1000;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
-
-        .lightbox.active {
-            display: flex;
-        }
-
+        .lightbox.active { display: flex; }
         .lightbox img {
             max-width: 90%;
             max-height: 90%;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            border-radius: var(--radius);
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.2);
         }
-
         .lightbox-close {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            padding: 10px;
-            transition: transform 0.2s;
-        }
-
-        .lightbox-close:hover {
-            transform: scale(1.1);
-        }
-
-        .lightbox-close svg {
-            width: 32px;
-            height: 32px;
-        }
-
-        #back-to-top {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background-color: var(--primary);
+            top: 20px; right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-sm);
             color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             cursor: pointer;
+            padding: 8px;
+            display: grid;
+            place-items: center;
+            transition: all var(--transition);
+        }
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+        .lightbox-close svg { width: 24px; height: 24px; }
+
+        /* ---------- Bouton retour en haut ---------- */
+        .scroll-top {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            width: 48px; height: 48px;
+            display: grid;
+            place-items: center;
+            border: 0;
+            border-radius: 50%;
+            background: var(--accent-grad);
+            color: #fff;
+            cursor: pointer;
+            box-shadow: var(--shadow), var(--glow);
             opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-            z-index: 90;
-            box-shadow: 0 4px 10px rgba(6, 182, 212, 0.4);
+            transform: translateY(20px) scale(0.85);
+            pointer-events: none;
+            transition: opacity var(--transition), transform var(--transition), filter var(--transition);
+            z-index: 85;
         }
-
-        #back-to-top.show {
+        .scroll-top svg {
+            width: 22px; height: 22px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .scroll-top.visible {
             opacity: 1;
-            visibility: visible;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
         }
+        .scroll-top:hover { filter: brightness(1.15); transform: translateY(-3px) scale(1.05); }
 
-        #back-to-top:hover {
-            transform: translateY(-3px);
-            background-color: var(--secondary);
-        }
-
-        #back-to-top svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        footer {
-            text-align: center;
-            padding: 2rem;
+        /* ---------- Footer ---------- */
+        .site-footer {
+            max-width: 900px;
+            margin: 40px auto 0;
+            padding: 24px 20px 40px;
             border-top: 1px solid var(--border);
-            margin-top: 4rem;
-            color: var(--text-color);
-            opacity: 0.7;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-dim);
+            font-size: 13.5px;
+        }
+        .site-footer p { margin: 0; }
+        .back-to-top {
+            color: var(--accent-2);
+            font-weight: 600;
+            font-size: 13px;
+        }
+        [data-theme="light"] .back-to-top { color: var(--accent-1); }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 640px) {
+            :root { --header-h: 60px; }
+            .header-inner { padding: 0 14px; gap: 10px; }
+            .brand-text { display: none; }
+            .lang-btn { padding: 4px 8px; min-width: 30px; font-size: 11px; }
+            main { padding: calc(var(--header-h) + 24px) 14px 40px; }
+            .prereq-card, .step-card { padding: 1.5rem 1.25rem; }
+            .step-number { font-size: 5.5rem; top: -12px; right: 10px; }
+            h2 { font-size: 1.15rem; }
+            .h2-icon { width: 30px; height: 30px; }
+            .h2-icon svg { width: 17px; height: 17px; }
+            .scroll-top { right: 16px; bottom: 16px; width: 44px; height: 44px; }
         }
 
-        @media (max-width: 600px) {
-            h1 { font-size: 1.8rem; }
-            .step-card { padding: 1.5rem; }
-            .step-number { font-size: 5rem; top: -10px; }
-            header { padding: 1rem; }
+        :focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; border-radius: 4px; }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.001ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.001ms !important;
+                scroll-behavior: auto !important;
+            }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-title" data-i18n="header_title">Intermec SG20T</div>
-        <div class="controls">
-            <button class="control-btn" id="lang-toggle" aria-label="Changer de langue">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-            </button>
-            <button class="control-btn" id="theme-toggle" aria-label="Changer de thème">
-                <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-            </button>
+    <!-- Fond décoratif : grille + 3 orbes floues -->
+    <div class="bg-layer" aria-hidden="true">
+        <div class="bg-grid"></div>
+        <div class="bg-orb bg-orb--1"></div>
+        <div class="bg-orb bg-orb--2"></div>
+        <div class="bg-orb bg-orb--3"></div>
+    </div>
+
+    <header class="site-header" id="siteHeader">
+        <div class="header-inner">
+            <a href="#top" class="brand" aria-label="Retour en haut">
+                <span class="brand-badge">TUTO</span>
+                <span class="brand-text" data-i18n="header_title">Intermec SG20T</span>
+            </a>
+
+            <div class="header-actions">
+                <div class="lang-switch" role="group" aria-label="Langue / Language">
+                    <button class="lang-btn is-active" data-lang="fr" aria-label="Français">FR</button>
+                    <button class="lang-btn" data-lang="en" aria-label="English">EN</button>
+                </div>
+
+                <button class="theme-toggle" id="themeToggle" aria-label="Changer de thème" aria-pressed="false">
+                    <span class="theme-toggle__track">
+                        <span class="theme-toggle__thumb">
+                            <svg class="ico-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+                            <svg class="ico-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+                        </span>
+                    </span>
+                </button>
+            </div>
         </div>
     </header>
 
-    <main>
+    <main id="top">
         <h1 data-i18n="main_title">Résolution du conflit Ctrl+J avec le scanner SG20T</h1>
 
         <div class="prereq-card">
             <h2>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <span class="h2-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </span>
                 <span data-i18n="prereq_title">Prérequis</span>
             </h2>
             <p data-i18n="prereq_desc">Pour reproduire ma méthode de résolution, vous aurez besoin des éléments suivants. J'ai utilisé l'outil officiel de Honeywell (qui a racheté Intermec) pour modifier les paramètres bas niveau du scanner.</p>
@@ -404,16 +658,18 @@
         </div>
 
         <div class="step-card">
-            <div class="step-number">1</div>
+            <div class="step-number" aria-hidden="true">1</div>
             <div class="step-content">
                 <h2>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    <span class="h2-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    </span>
                     <span data-i18n="step1_title">Comprendre la cause racine (HID et CR+LF)</span>
                 </h2>
                 <p data-i18n="step1_desc">J'ai identifié que le problème ne venait ni de mon application React, ni du navigateur, mais de la configuration d'usine du scanner. Le SG20T émule un clavier (HID) et envoie par défaut un suffixe <strong>Carriage Return + Line Feed (CR+LF)</strong> après chaque scan.</p>
                 <p data-i18n="step1_desc2">Dans un environnement de bureau, cela valide la saisie. Mais dans un navigateur Chromium, le caractère <strong>LF (Line Feed)</strong> est interprété comme le raccourci clavier <code>Ctrl+J</code>, ce qui a pour effet d'ouvrir l'onglet des téléchargements à chaque scan.</p>
-                <div class="alert">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                <div class="alert alert--info">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                     <div>
                         <strong data-i18n="step1_alert_title">Analyse technique :</strong>
                         <span data-i18n="step1_alert_desc">La solution la plus robuste consiste à reconfigurer le suffixe (Postamble) du scanner pour qu'il n'envoie plus que <code>CR</code>. J'ai écarté l'option <code>None</code> car elle nécessitait une validation manuelle, et j'ai retiré le <code>LF</code> qui déclenchait le raccourci.</span>
@@ -423,10 +679,12 @@
         </div>
 
         <div class="step-card">
-            <div class="step-number">2</div>
+            <div class="step-number" aria-hidden="true">2</div>
             <div class="step-content">
                 <h2>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span class="h2-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                    </span>
                     <span data-i18n="step2_title">Création d'un postamble personnalisé</span>
                 </h2>
                 <p data-i18n="step2_desc">Après avoir installé et lancé EasySet, j'ai connecté le scanner et sélectionné le modèle <strong>SG20T</strong>. J'ai ensuite navigué dans l'arborescence jusqu'à <code>4. Data transmission settings</code> puis cliqué sur <code>Postamble</code>.</p>
@@ -444,16 +702,18 @@
         </div>
 
         <div class="step-card">
-            <div class="step-number">3</div>
+            <div class="step-number" aria-hidden="true">3</div>
             <div class="step-content">
                 <h2>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span class="h2-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
                     <span data-i18n="step3_title">Génération et envoi au matériel</span>
                 </h2>
                 <p data-i18n="step3_desc">Une fois la commande personnalisée composée, j'ai généré le code-barres de configuration via le bouton <strong>Generate Barcode</strong> (ou l'icône dédiée dans la barre d'outils).</p>
                 <p data-i18n="step3_desc2">J'ai ensuite scanné ce code-barres avec le SG20T pour enregistrer la nouvelle configuration dans sa mémoire. Le scanner a émis un bip de confirmation, validant la prise en compte du suffixe <code>CR</code> seul.</p>
-                <div class="alert">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                <div class="alert alert--tip">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26A7 7 0 0 0 12 2z"/></svg>
                     <div>
                         <strong data-i18n="step3_alert_title">Note sur l'envoi :</strong>
                         <span data-i18n="step3_alert_desc">Si votre scanner est connecté en USB, vous pouvez aussi utiliser l'option "Send to product" (la flèche verte dans la barre d'outils d'EasySet) pour envoyer la commande directement, sans passer par le scan du code-barres.</span>
@@ -463,20 +723,26 @@
         </div>
 
         <div class="step-card">
-            <div class="step-number">4</div>
+            <div class="step-number" aria-hidden="true">4</div>
             <div class="step-content">
                 <h2>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <span class="h2-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </span>
                     <span data-i18n="step4_title">Sécurisation logicielle (Optionnelle)</span>
                 </h2>
                 <p data-i18n="step4_desc">Bien que la reconfiguration matérielle ait résolu mon problème, j'ai ajouté une sécurité dans mon application React. Cela permet d'intercepter les événements si un autre scanner (ou un utilisateur) envoie un caractère de fin non désiré.</p>
                 <div class="code-block">
-                    <button class="copy-btn" data-i18n="copy_btn">Copier</button>
-<pre><code>const handleKeyDown = (event) => {
+                    <button class="copy-btn" aria-label="Copier le code">
+                        <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
+                        <span data-i18n="copy_btn">Copier</span>
+                    </button>
+                    <pre><code>const handleKeyDown = (event) =&gt; {
   // Interception de la touche Entrée (13) ou Line Feed (10)
   if (event.key === 'Enter' || event.keyCode === 13 || event.keyCode === 10) {
     event.preventDefault(); // Bloque le comportement par défaut (ex: Ctrl+J)
-    
+
     // Logique de validation du scan
     console.log('Scan validé:', inputElement.value);
   }
@@ -484,25 +750,28 @@
                 </div>
             </div>
         </div>
-
     </main>
 
-    <footer>
+    <footer class="site-footer">
         <p>By <a href="https://github.com/Septieme7" target="_blank" rel="noopener">Septieme7</a></p>
+        <a href="#top" class="back-to-top" data-i18n="back_top">Revenir en haut</a>
     </footer>
 
-    <div class="lightbox" id="lightbox">
-        <button class="lightbox-close" id="lightbox-close">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Aperçu de l'image">
+        <button class="lightbox-close" id="lightboxClose" aria-label="Fermer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
-        <img id="lightbox-img" src="" alt="Zoom">
+        <img id="lightboxImg" src="" alt="Zoom">
     </div>
 
-    <button id="back-to-top" aria-label="Retour en haut">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+    <button id="scrollTop" class="scroll-top" aria-label="Remonter en haut" title="Remonter">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
     </button>
 
     <script>
+        /* =========================================================
+           Traductions
+           ========================================================= */
         const translations = {
             fr: {
                 header_title: "Intermec SG20T",
@@ -533,7 +802,8 @@
                 step4_title: "Sécurisation logicielle (Optionnelle)",
                 step4_desc: "Bien que la reconfiguration matérielle ait résolu mon problème, j'ai ajouté une sécurité dans mon application React. Cela permet d'intercepter les événements si un autre scanner (ou un utilisateur) envoie un caractère de fin non désiré.",
                 copy_btn: "Copier",
-                copied_btn: "Copié !"
+                copied_btn: "Copié !",
+                back_top: "Revenir en haut"
             },
             en: {
                 header_title: "Intermec SG20T",
@@ -564,89 +834,128 @@
                 step4_title: "Software hardening (Optional)",
                 step4_desc: "Although the hardware reconfiguration solved my issue, I added a safeguard in my React application. This intercepts events if another scanner (or user) sends an undesired terminator character.",
                 copy_btn: "Copy",
-                copied_btn: "Copied!"
+                copied_btn: "Copied!",
+                back_top: "Back to top"
             }
         };
 
         let currentLang = 'fr';
 
+        /* =========================================================
+           Langue : switch FR/EN (pilule)
+           ========================================================= */
         function setLanguage(lang) {
             currentLang = lang;
             document.documentElement.lang = lang;
+
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
-                if (translations[lang][key]) {
+                if (translations[lang][key] !== undefined) {
                     el.innerHTML = translations[lang][key];
                 }
             });
+
             document.querySelectorAll('[data-i18n-alt]').forEach(el => {
                 const key = el.getAttribute('data-i18n-alt');
-                if (translations[lang][key]) {
-                    el.alt = translations[lang][key];
-                }
+                if (translations[lang][key]) el.alt = translations[lang][key];
             });
-            // Update copy buttons text if not copied
+
+            // Mise à jour des boutons de langue
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                const isActive = btn.getAttribute('data-lang') === lang;
+                btn.classList.toggle('is-active', isActive);
+                if (isActive) btn.setAttribute('aria-current', 'true');
+                else btn.removeAttribute('aria-current');
+            });
+
+            // Mise à jour du texte des boutons copier (hors état "copied")
             document.querySelectorAll('.copy-btn').forEach(btn => {
-                if(!btn.classList.contains('copied')) {
-                    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> ${translations[lang].copy_btn}`;
+                if (!btn.classList.contains('copied')) {
+                    const span = btn.querySelector('span');
+                    if (span) span.textContent = translations[lang].copy_btn;
                 }
             });
+
+            try { localStorage.setItem('lang', lang); } catch (e) {}
         }
 
-        document.getElementById('lang-toggle').addEventListener('click', () => {
-            setLanguage(currentLang === 'fr' ? 'en' : 'fr');
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => setLanguage(btn.getAttribute('data-lang')));
         });
 
-        // Theme toggle
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeIcon = document.getElementById('theme-icon');
-        const body = document.body;
+        // Restauration de la langue
+        try {
+            const savedLang = localStorage.getItem('lang');
+            if (savedLang === 'en' || savedLang === 'fr') setLanguage(savedLang);
+        } catch (e) {}
 
-        const sunIcon = `<path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"></path>`;
-        const moonIcon = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+        /* =========================================================
+           Thème : toggle pilule (dark / light)
+           ========================================================= */
+        const root = document.documentElement;
+        const themeToggle = document.getElementById('themeToggle');
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
 
-        function setTheme(isLight) {
-            if (isLight) {
-                body.classList.add('light-mode');
-                themeIcon.innerHTML = sunIcon;
-                localStorage.setItem('theme', 'light');
-            } else {
-                body.classList.remove('light-mode');
-                themeIcon.innerHTML = moonIcon;
-                localStorage.setItem('theme', 'dark');
-            }
+        function applyTheme(theme) {
+            root.setAttribute('data-theme', theme);
+            if (themeToggle) themeToggle.setAttribute('aria-pressed', theme === 'light' ? 'true' : 'false');
+            if (metaTheme) metaTheme.setAttribute('content', theme === 'dark' ? '#070b14' : '#f3f6fc');
         }
 
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') setTheme(true);
+        try {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light' || savedTheme === 'dark') {
+                applyTheme(savedTheme);
+            } else {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                applyTheme(prefersDark ? 'dark' : 'light');
+            }
+        } catch (e) {
+            applyTheme('dark');
+        }
 
         themeToggle.addEventListener('click', () => {
-            setTheme(!body.classList.contains('light-mode'));
+            const current = root.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            applyTheme(next);
+            try { localStorage.setItem('theme', next); } catch (e) {}
         });
 
-        // Back to top
-        const backToTop = document.getElementById('back-to-top');
+        /* =========================================================
+           Header scrolled
+           ========================================================= */
+        const header = document.getElementById('siteHeader');
+        const onHeaderScroll = () => {
+            if (window.scrollY > 20) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+        };
+        window.addEventListener('scroll', onHeaderScroll, { passive: true });
+        onHeaderScroll();
+
+        /* =========================================================
+           Bouton retour en haut
+           ========================================================= */
+        const scrollTop = document.getElementById('scrollTop');
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                backToTop.classList.add('show');
-            } else {
-                backToTop.classList.remove('show');
-            }
-        });
+            if (window.scrollY > 300) scrollTop.classList.add('visible');
+            else scrollTop.classList.remove('visible');
+        }, { passive: true });
 
-        backToTop.addEventListener('click', () => {
+        scrollTop.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        // Lightbox
+        /* =========================================================
+           Lightbox
+           ========================================================= */
         const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightbox-img');
-        const lightboxClose = document.getElementById('lightbox-close');
-        const images = document.querySelectorAll('.image-container img');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const lightboxClose = document.getElementById('lightboxClose');
 
-        images.forEach(img => {
+        document.querySelectorAll('.image-container img').forEach(img => {
             img.addEventListener('click', () => {
                 lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt || 'Zoom';
                 lightbox.classList.add('active');
                 document.body.style.overflow = 'hidden';
             });
@@ -665,21 +974,42 @@
             if (e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox();
         });
 
-        // Copy button
+        /* =========================================================
+           Boutons Copier
+           ========================================================= */
         document.querySelectorAll('.copy-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const codeBlock = btn.nextElementSibling;
+                if (!codeBlock) return;
                 const textToCopy = codeBlock.textContent;
+
                 try {
-                    await navigator.clipboard.writeText(textToCopy);
+                    if (navigator.clipboard && window.isSecureContext) {
+                        await navigator.clipboard.writeText(textToCopy);
+                    } else {
+                        const ta = document.createElement('textarea');
+                        ta.value = textToCopy;
+                        ta.style.position = 'fixed';
+                        ta.style.opacity = '0';
+                        document.body.appendChild(ta);
+                        ta.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(ta);
+                    }
+
                     btn.classList.add('copied');
-                    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> ${translations[currentLang].copied_btn}`;
+                    btn.querySelector('.icon-copy').style.display = 'none';
+                    btn.querySelector('.icon-check').style.display = '';
+                    btn.querySelector('span').textContent = translations[currentLang].copied_btn;
+
                     setTimeout(() => {
                         btn.classList.remove('copied');
-                        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> ${translations[currentLang].copy_btn}`;
+                        btn.querySelector('.icon-copy').style.display = '';
+                        btn.querySelector('.icon-check').style.display = 'none';
+                        btn.querySelector('span').textContent = translations[currentLang].copy_btn;
                     }, 2000);
                 } catch (err) {
-                    console.error('Failed to copy', err);
+                    console.error('Copy failed', err);
                 }
             });
         });
